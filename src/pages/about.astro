@@ -1,5 +1,9 @@
 ---
+import fs from "node:fs";
 import BaseLayout from "../layouts/BaseLayout.astro";
+
+const resumePath = "public/resume/nicholas-kasten-resume.pdf";
+const resumeExists = fs.existsSync(resumePath);
 ---
 
 <BaseLayout
@@ -30,30 +34,42 @@ import BaseLayout from "../layouts/BaseLayout.astro";
         GitHub
       </a>
       <a
-        href="https://linkedin.com/in/nicholasmkasten"
+        href="https://www.linkedin.com/in/nicholas-kasten/"
         target="_blank"
         rel="noopener noreferrer"
         class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#0077B5] text-white hover:opacity-90 transition-opacity text-sm font-medium"
       >
         LinkedIn
       </a>
-      <a
-        href="/resume/nicholas-kasten-resume.pdf"
-        download
-        class="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-sage-600 dark:border-sage-400 text-sage-600 dark:text-sage-400 hover:bg-sage-600 hover:text-white dark:hover:bg-sage-400 dark:hover:text-stone-950 transition-colors text-sm font-medium"
-      >
-        Download Resume
-      </a>
+      {resumeExists && (
+        <a
+          href="/resume/nicholas-kasten-resume.pdf"
+          download
+          class="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-sage-600 dark:border-sage-400 text-sage-600 dark:text-sage-400 hover:bg-sage-600 hover:text-white dark:hover:bg-sage-400 dark:hover:text-stone-950 transition-colors text-sm font-medium"
+        >
+          Download Resume
+        </a>
+      )}
     </div>
 
     <!-- Resume Preview -->
-    <div
-      class="rounded-xl border border-sand-200 dark:border-stone-700 overflow-hidden"
-    >
-      <iframe
-        src="/resume/nicholas-kasten-resume.pdf"
-        class="w-full h-[80vh]"
-        title="Resume preview"></iframe>
-    </div>
+    {resumeExists ? (
+      <div
+        class="rounded-xl border border-sand-200 dark:border-stone-700 overflow-hidden"
+      >
+        <iframe
+          src="/resume/nicholas-kasten-resume.pdf"
+          class="w-full h-[80vh]"
+          title="Resume preview"></iframe>
+      </div>
+    ) : (
+      <div
+        class="rounded-xl border border-sand-200 dark:border-stone-700 p-12 text-center"
+      >
+        <p class="text-lg text-stone-600 dark:text-sand-300">
+          Currently updating my resume — check back soon!
+        </p>
+      </div>
+    )}
   </section>
 </BaseLayout>
