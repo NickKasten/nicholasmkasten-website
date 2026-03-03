@@ -1,0 +1,99 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+/* Dark mode via class strategy */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Smooth dark mode transition */
+body,
+nav,
+footer {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* ===== Self-hosted DINish font ===== */
+@font-face {
+  font-family: "DINish";
+  src: url("/fonts/DINish-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "DINish";
+  src: url("/fonts/DINish-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ===== Theme tokens ===== */
+@theme {
+  --font-sans: "DINish", ui-sans-serif, system-ui, sans-serif;
+
+  /* --- Sage Green (dominant) --- */
+  --color-sage-50: #f4f7f4;
+  --color-sage-100: #e4ebe3;
+  --color-sage-200: #c9d7c7;
+  --color-sage-300: #a3bda0;
+  --color-sage-400: #7a9e76;
+  --color-sage-500: #5a8056;
+  --color-sage-600: #466743;
+  --color-sage-700: #385236;
+  --color-sage-800: #2e422d;
+  --color-sage-900: #263726;
+  --color-sage-950: #121d12;
+
+  /* --- Terracotta --- */
+  --color-terra-50: #fdf5f0;
+  --color-terra-100: #fae8db;
+  --color-terra-200: #f4ceb6;
+  --color-terra-300: #ecad87;
+  --color-terra-400: #e38a5c;
+  --color-terra-500: #d4663a;
+  --color-terra-600: #c4512e;
+  --color-terra-700: #a33e28;
+  --color-terra-800: #843426;
+  --color-terra-900: #6b2d23;
+  --color-terra-950: #3a1410;
+
+  /* --- Warm Sand --- */
+  --color-sand-50: #faf8f3;
+  --color-sand-100: #f3efe3;
+  --color-sand-200: #e6ddc6;
+  --color-sand-300: #d5c7a1;
+  --color-sand-400: #c4ad7c;
+  --color-sand-500: #b89862;
+  --color-sand-600: #ab8454;
+  --color-sand-700: #8e6b46;
+  --color-sand-800: #74573d;
+  --color-sand-900: #604834;
+  --color-sand-950: #33251a;
+
+  /* --- Clay (muted rose/brown) --- */
+  --color-clay-50: #faf5f2;
+  --color-clay-100: #f3e8e1;
+  --color-clay-200: #e6cfc2;
+  --color-clay-300: #d6b09b;
+  --color-clay-400: #c48d73;
+  --color-clay-500: #b87659;
+  --color-clay-600: #aa644c;
+  --color-clay-700: #8e5040;
+  --color-clay-800: #744339;
+  --color-clay-900: #603a32;
+  --color-clay-950: #331c18;
+
+  /* --- Stone (neutral darks) --- */
+  --color-stone-50: #f8f7f5;
+  --color-stone-100: #efede8;
+  --color-stone-200: #ddd9d0;
+  --color-stone-300: #c7c0b3;
+  --color-stone-400: #afa593;
+  --color-stone-500: #9d907c;
+  --color-stone-600: #908170;
+  --color-stone-700: #786b5e;
+  --color-stone-800: #635950;
+  --color-stone-900: #524a43;
+  --color-stone-950: #2b2723;
+}

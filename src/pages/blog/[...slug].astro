@@ -1,0 +1,64 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getCollection, render } from "astro:content";
+
+export async function getStaticPaths() {
+  const posts = await getCollection("blog", ({ data }) => {
+    return import.meta.env.PROD ? data.draft !== true : true;
+  });
+
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+---
+
+<BaseLayout
+  title={`${post.data.title} — Nicholas M. Kasten`}
+  description={post.data.summary}
+  image={post.data.image}
+>
+  <article class="max-w-3xl mx-auto px-6 pt-16 pb-20">
+    <a
+      href="/blog"
+      class="inline-flex items-center gap-1 text-sm text-sage-600 dark:text-sage-400 hover:underline mb-6"
+    >
+      &larr; Back to Blog
+    </a>
+    <header class="mb-10">
+      <time class="text-sm text-stone-400 dark:text-stone-500">
+        {
+          post.data.pubDate.toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          })
+        }
+      </time>
+      <h1
+        class="text-3xl sm:text-4xl font-bold text-stone-900 dark:text-sand-100 mt-2 mb-4"
+      >
+        {post.data.title}
+      </h1>
+      <div class="flex gap-2">
+        {
+          post.data.categories.map((cat) => (
+            <span class="text-xs px-2 py-0.5 rounded-full bg-terra-100 dark:bg-terra-900 text-terra-700 dark:text-terra-300">
+              {cat}
+            </span>
+          ))
+        }
+      </div>
+    </header>
+
+    <div
+      class="prose prose-stone dark:prose-invert max-w-none prose-headings:font-bold prose-headings:text-stone-900 dark:prose-headings:text-sand-100 prose-a:text-sage-600 dark:prose-a:text-sage-400 prose-a:underline-offset-2 prose-img:rounded-xl"
+    >
+      <Content />
+    </div>
+  </article>
+</BaseLayout>

@@ -1,0 +1,40 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import ProjectCard from "../components/ProjectCard.astro";
+import ScrollReveal from "../components/ScrollReveal.astro";
+import { projects } from "../data/projects";
+---
+
+<BaseLayout
+  title="Nicholas M. Kasten"
+  description="Software engineer, builder, thinker. Check out my projects and writing."
+>
+  <!-- Hero Section -->
+  <section class="max-w-5xl mx-auto px-6 pt-20 pb-16">
+    <h1
+      class="text-4xl sm:text-5xl font-bold tracking-tight text-stone-900 dark:text-sand-100 mb-4"
+    >
+      Welcome, I'm <span class="text-sage-600 dark:text-sage-400">Nick</span>.
+    </h1>
+    <p
+      class="text-lg text-stone-600 dark:text-sand-300 max-w-2xl leading-relaxed"
+    >
+      AI Engineer and published musician creating for a better world.
+      <br />
+      Here is what I've been working on:
+    </p>
+  </section>
+
+  <!-- Projects Grid -->
+  <section class="max-w-5xl mx-auto px-6 pb-20">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {
+        projects.map((project) => (
+          <ScrollReveal>
+            <ProjectCard project={project} />
+          </ScrollReveal>
+        ))
+      }
+    </div>
+  </section>
+</BaseLayout>

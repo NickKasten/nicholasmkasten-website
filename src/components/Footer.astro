@@ -1,0 +1,33 @@
+---
+const currentYear = new Date().getFullYear();
+---
+
+<footer
+  class="border-t border-sand-200 dark:border-stone-700 bg-sand-50 dark:bg-stone-950"
+>
+  <div
+    class="max-w-5xl mx-auto px-6 py-8 flex flex-col sm:flex-row items-center justify-between gap-4"
+  >
+    <p class="text-sm text-stone-500 dark:text-stone-400">
+      &copy; {currentYear} Nicholas M. Kasten
+    </p>
+    <div class="flex items-center gap-4">
+      <a
+        href="https://github.com/NickKasten"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="text-stone-500 dark:text-stone-400 hover:text-sage-600 dark:hover:text-sage-400 transition-colors"
+      >
+        GitHub
+      </a>
+      <a
+        href="https://linkedin.com/in/nicholasmkasten"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="text-stone-500 dark:text-stone-400 hover:text-sage-600 dark:hover:text-sage-400 transition-colors"
+      >
+        LinkedIn
+      </a>
+    </div>
+  </div>
+</footer>

@@ -1,0 +1,124 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
+
+const allPosts = await getCollection("blog", ({ data }) => {
+  return import.meta.env.PROD ? data.draft !== true : true;
+});
+
+const posts = allPosts.sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
+
+const allCategories = [
+  ...new Set(posts.flatMap((p) => p.data.categories)),
+].sort();
+---
+
+<BaseLayout
+  title="Blog — Nicholas M. Kasten"
+  description="Thoughts on tech, career, and building things."
+>
+  <section class="max-w-3xl mx-auto px-6 pt-16 pb-20">
+    <h1 class="text-3xl font-bold mb-8 text-stone-900 dark:text-sand-100">
+      Blog
+    </h1>
+
+    <!-- Category filter -->
+    <div class="flex flex-wrap gap-2 mb-10" id="category-filters">
+      <button
+        data-category="all"
+        class="filter-btn text-sm px-3 py-1 rounded-full border cursor-pointer border-sage-600 dark:border-sage-400 bg-sage-600 dark:bg-sage-400 text-white dark:text-stone-950 transition-colors"
+      >
+        All
+      </button>
+      {
+        allCategories.map((cat) => (
+          <button
+            data-category={cat}
+            class="filter-btn text-sm px-3 py-1 rounded-full border cursor-pointer border-sand-300 dark:border-stone-600 text-stone-600 dark:text-sand-300 hover:border-sage-600 dark:hover:border-sage-400 transition-colors"
+          >
+            {cat}
+          </button>
+        ))
+      }
+    </div>
+
+    <!-- Post list -->
+    <ul class="space-y-8" id="post-list">
+      {
+        posts.map((post) => (
+          <li data-categories={post.data.categories.join(",")} class="post-item">
+            <a href={`/blog/${post.id}`} class="group block">
+              <time class="text-sm text-stone-400 dark:text-stone-500">
+                {post.data.pubDate.toLocaleDateString("en-US", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })}
+              </time>
+              <h2 class="text-xl font-bold text-stone-900 dark:text-sand-100 group-hover:text-sage-600 dark:group-hover:text-sage-400 transition-colors mt-1">
+                {post.data.title}
+              </h2>
+              <p class="text-stone-500 dark:text-stone-400 mt-1">
+                {post.data.summary}
+              </p>
+              <div class="flex gap-2 mt-2">
+                {post.data.categories.map((cat) => (
+                  <span class="text-xs px-2 py-0.5 rounded-full bg-terra-100 dark:bg-terra-900 text-terra-700 dark:text-terra-300">
+                    {cat}
+                  </span>
+                ))}
+              </div>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <script>
+    document.addEventListener("astro:page-load", () => {
+      const buttons =
+        document.querySelectorAll<HTMLButtonElement>(".filter-btn");
+      const posts = document.querySelectorAll<HTMLLIElement>(".post-item");
+
+      const activeClasses = [
+        "bg-sage-600",
+        "dark:bg-sage-400",
+        "text-white",
+        "dark:text-stone-950",
+        "border-sage-600",
+        "dark:border-sage-400",
+      ];
+      const inactiveClasses = [
+        "border-sand-300",
+        "dark:border-stone-600",
+        "text-stone-600",
+        "dark:text-sand-300",
+      ];
+
+      buttons.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const category = btn.dataset.category;
+
+          buttons.forEach((b) => {
+            b.classList.remove(...activeClasses);
+            b.classList.add(...inactiveClasses);
+          });
+          btn.classList.add(...activeClasses);
+          btn.classList.remove(...inactiveClasses);
+
+          posts.forEach((post) => {
+            if (category === "all") {
+              post.style.display = "";
+            } else {
+              const cats = post.dataset.categories?.split(",") ?? [];
+              post.style.display = cats.includes(category!) ? "" : "none";
+            }
+          });
+        });
+      });
+    });
+  </script>
+</BaseLayout>

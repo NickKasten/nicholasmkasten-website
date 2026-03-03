@@ -1,0 +1,71 @@
+---
+import type { Project } from "../data/projects";
+
+interface Props {
+  project: Project;
+}
+
+const { project } = Astro.props;
+---
+
+<article
+  class="group relative bg-white dark:bg-stone-800 rounded-2xl border border-sand-200 dark:border-stone-700 overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1"
+>
+  {
+    project.image && (
+      <div class="aspect-video overflow-hidden">
+        <img
+          src={project.image}
+          alt={project.title}
+          class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          loading="lazy"
+        />
+      </div>
+    )
+  }
+  <div class="p-6">
+    <h3
+      class="text-lg font-bold text-stone-900 dark:text-sand-100 mb-1"
+    >
+      {project.title}
+    </h3>
+    <p class="text-sm text-stone-500 dark:text-stone-400 mb-3">
+      {project.tagline}
+    </p>
+    <div class="flex flex-wrap gap-2 mb-4">
+      {
+        project.tech.map((t) => (
+          <span class="text-xs px-2 py-1 rounded-full bg-sage-100 dark:bg-sage-900 text-sage-700 dark:text-sage-300">
+            {t}
+          </span>
+        ))
+      }
+    </div>
+    <div class="flex gap-3 text-sm">
+      {
+        project.liveUrl && (
+          <a
+            href={project.liveUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-sage-600 dark:text-sage-400 hover:underline"
+          >
+            Live Site &rarr;
+          </a>
+        )
+      }
+      {
+        project.repoUrl && (
+          <a
+            href={project.repoUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-terra-600 dark:text-terra-400 hover:underline"
+          >
+            Source &rarr;
+          </a>
+        )
+      }
+    </div>
+  </div>
+</article>

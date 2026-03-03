@@ -1,0 +1,59 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout
+  title="About — Nicholas M. Kasten"
+  description="About Nicholas M. Kasten — software engineer, builder, thinker."
+>
+  <section class="max-w-3xl mx-auto px-6 pt-16 pb-20">
+    <h1 class="text-3xl font-bold mb-6 text-stone-900 dark:text-sand-100">
+      About Me
+    </h1>
+
+    <div class="prose prose-stone dark:prose-invert max-w-none mb-12">
+      <p>
+        Hello! I am Nick. I build software, AI-native and AI/ML powered.
+        <br />
+        I also write music, philosophize about the industry, and more.
+      </p>
+    </div>
+
+    <!-- Links -->
+    <div class="flex flex-wrap gap-4 mb-12">
+      <a
+        href="https://github.com/NickKasten"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-stone-900 dark:bg-sand-100 text-white dark:text-stone-900 hover:opacity-90 transition-opacity text-sm font-medium"
+      >
+        GitHub
+      </a>
+      <a
+        href="https://linkedin.com/in/nicholasmkasten"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#0077B5] text-white hover:opacity-90 transition-opacity text-sm font-medium"
+      >
+        LinkedIn
+      </a>
+      <a
+        href="/resume/nicholas-kasten-resume.pdf"
+        download
+        class="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-sage-600 dark:border-sage-400 text-sage-600 dark:text-sage-400 hover:bg-sage-600 hover:text-white dark:hover:bg-sage-400 dark:hover:text-stone-950 transition-colors text-sm font-medium"
+      >
+        Download Resume
+      </a>
+    </div>
+
+    <!-- Resume Preview -->
+    <div
+      class="rounded-xl border border-sand-200 dark:border-stone-700 overflow-hidden"
+    >
+      <iframe
+        src="/resume/nicholas-kasten-resume.pdf"
+        class="w-full h-[80vh]"
+        title="Resume preview"></iframe>
+    </div>
+  </section>
+</BaseLayout>
