@@ -97,3 +97,49 @@ footer {
   --color-stone-900: #524a43;
   --color-stone-950: #2b2723;
 }
+
+/* ===== Musical-timing reveal tokens =====
+   Used by ScrollReveal stagger to give grids a rhythmic 1-e-&-a feel. */
+:root {
+  --reveal-16th: 80ms;
+  --reveal-8th: 160ms;
+  --reveal-quarter: 320ms;
+}
+
+/* ===== Music-inspired motion =====
+   All custom animation lives behind a reduced-motion guard so users who
+   opt out get static states with no layout shift. */
+@media (prefers-reduced-motion: no-preference) {
+  /* Slow horizontal "breath" used under the hero baseline. */
+  @keyframes breathe {
+    0%, 100% { transform: scaleX(1); opacity: 0.6; }
+    50%      { transform: scaleX(1.04); opacity: 1; }
+  }
+
+  /* Three EQ bars pulse at offset cadences so they feel alive, not synced.
+     The :nth-child selectors in EqAccent.astro pick up these animations. */
+  @keyframes eq-pulse-a {
+    0%, 100% { transform: scaleY(0.35); }
+    50%      { transform: scaleY(1); }
+  }
+  @keyframes eq-pulse-b {
+    0%, 100% { transform: scaleY(0.6); }
+    50%      { transform: scaleY(0.9); }
+  }
+  @keyframes eq-pulse-c {
+    0%, 100% { transform: scaleY(0.5); }
+    50%      { transform: scaleY(1); }
+  }
+
+  /* Drifting waveform backdrop layers. SVGs are rendered at 200% width with
+     an even cycle count, so a 50% translation lands on a whole-number cycle
+     and the loop is seamless. */
+  @keyframes wave-drift-right {
+    from { transform: translate3d(0, 0, 0); }
+    to   { transform: translate3d(-50%, 0, 0); }
+  }
+  @keyframes wave-drift-left {
+    from { transform: translate3d(-50%, 0, 0); }
+    to   { transform: translate3d(0, 0, 0); }
+  }
+}

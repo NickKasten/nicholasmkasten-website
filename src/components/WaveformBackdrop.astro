@@ -1,0 +1,101 @@
+---
+type Layer = {
+  top: string;
+  cycles: number;
+  amplitude: number;
+  strokeWidth: number;
+  colorVar: string;
+  opacity: number;
+  durationSec: number;
+  direction: "right" | "left";
+};
+
+const layers: Layer[] = [
+  { top: "22%", cycles: 6, amplitude: 8,  strokeWidth: 1.5, colorVar: "var(--color-sage-300)",  opacity: 0.18, durationSec: 90,  direction: "right" },
+  { top: "50%", cycles: 4, amplitude: 14, strokeWidth: 2,   colorVar: "var(--color-terra-300)", opacity: 0.14, durationSec: 130, direction: "left"  },
+  { top: "78%", cycles: 8, amplitude: 6,  strokeWidth: 1.5, colorVar: "var(--color-sand-400)",  opacity: 0.12, durationSec: 70,  direction: "right" },
+];
+
+function buildPath(cycles: number, amplitude: number) {
+  const cycleWidth = 100;
+  const padding = amplitude + 2;
+  let d = `M 0 ${padding}`;
+  for (let i = 0; i < cycles; i++) {
+    const x0 = i * cycleWidth;
+    const xMid = x0 + cycleWidth / 2;
+    const xEnd = x0 + cycleWidth;
+    const c1a = x0 + cycleWidth / 6;
+    const c2a = x0 + cycleWidth / 3;
+    const c1b = xMid + cycleWidth / 6;
+    const c2b = xMid + cycleWidth / 3;
+    d += ` C ${c1a} ${padding - amplitude}, ${c2a} ${padding - amplitude}, ${xMid} ${padding}`;
+    d += ` C ${c1b} ${padding + amplitude}, ${c2b} ${padding + amplitude}, ${xEnd} ${padding}`;
+  }
+  return { d, totalWidth: cycles * cycleWidth, height: padding * 2 };
+}
+---
+
+<div class="waveform-backdrop" aria-hidden="true">
+  {
+    layers.map((layer) => {
+      const { d, totalWidth, height } = buildPath(layer.cycles, layer.amplitude);
+      return (
+        <div
+          class:list={[
+            "wave-layer",
+            layer.direction === "right" ? "wave-layer--right" : "wave-layer--left",
+          ]}
+          style={`top:${layer.top};animation-duration:${layer.durationSec}s;opacity:${layer.opacity}`}
+        >
+          <svg
+            viewBox={`0 0 ${totalWidth} ${height}`}
+            preserveAspectRatio="none"
+            width="100%"
+            height="100%"
+          >
+            <path
+              d={d}
+              fill="none"
+              stroke={layer.colorVar}
+              stroke-width={layer.strokeWidth}
+              stroke-linecap="round"
+            />
+          </svg>
+        </div>
+      );
+    })
+  }
+</div>
+
+<style>
+  .waveform-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: -10;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .wave-layer {
+    position: absolute;
+    left: 0;
+    /* Render at 200% so a 50% translate lands on a whole cycle and loops seamlessly. */
+    width: 200%;
+    height: 12vh;
+    transform: translate3d(0, 0, 0);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .wave-layer {
+      will-change: transform;
+      animation-timing-function: linear;
+      animation-iteration-count: infinite;
+    }
+    .wave-layer--right {
+      animation-name: wave-drift-right;
+    }
+    .wave-layer--left {
+      animation-name: wave-drift-left;
+    }
+  }
+</style>

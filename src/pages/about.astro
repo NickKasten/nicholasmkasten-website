@@ -1,9 +1,40 @@
 ---
 import fs from "node:fs";
+import path from "node:path";
 import BaseLayout from "../layouts/BaseLayout.astro";
 
-const resumePath = "public/resume/nicholas-kasten-resume.pdf";
-const resumeExists = fs.existsSync(resumePath);
+const resumeDir = "public/resume";
+const resume = fs.existsSync(resumeDir)
+  ? fs
+      .readdirSync(resumeDir)
+      .filter((f) => f.toLowerCase().endsWith(".pdf"))
+      .map((f) => ({
+        name: f,
+        mtime: fs.statSync(path.join(resumeDir, f)).mtimeMs,
+      }))
+      .sort((a, b) => b.mtime - a.mtime)[0]
+  : undefined;
+const resumeExists = !!resume;
+const resumeUrl = resume ? `/resume/${encodeURIComponent(resume.name)}` : null;
+
+// Resume page images are pre-rendered by `scripts/render-resume.mjs` (run via
+// the `predev` / `prebuild` npm hooks). We just enumerate them in page order.
+const generatedDir = path.join(resumeDir, "_generated");
+const pageImages: string[] = [];
+if (resume && fs.existsSync(generatedDir)) {
+  const baseName = resume.name.replace(/\.pdf$/i, "");
+  const pages = fs
+    .readdirSync(generatedDir)
+    .filter((f) => f.startsWith(`${baseName}-p`) && f.endsWith(".png"))
+    .sort((a, b) => {
+      const numFor = (n: string) =>
+        Number(n.match(/-p(\d+)\.png$/i)?.[1] ?? 0);
+      return numFor(a) - numFor(b);
+    });
+  for (const f of pages) {
+    pageImages.push(`/resume/_generated/${encodeURIComponent(f)}`);
+  }
+}
 ---
 
 <BaseLayout
@@ -41,9 +72,9 @@ const resumeExists = fs.existsSync(resumePath);
       >
         LinkedIn
       </a>
-      {resumeExists && (
+      {resumeExists && resumeUrl && (
         <a
-          href="/resume/nicholas-kasten-resume.pdf"
+          href={resumeUrl}
           download
           class="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-sage-600 dark:border-sage-400 text-sage-600 dark:text-sage-400 hover:bg-sage-600 hover:text-white dark:hover:bg-sage-400 dark:hover:text-stone-950 transition-colors text-sm font-medium"
         >
@@ -53,14 +84,18 @@ const resumeExists = fs.existsSync(resumePath);
     </div>
 
     <!-- Resume Preview -->
-    {resumeExists ? (
+    {pageImages.length > 0 ? (
       <div
-        class="rounded-xl border border-sand-200 dark:border-stone-700 overflow-hidden"
+        class="rounded-xl border border-sand-200 dark:border-stone-700 overflow-hidden bg-white space-y-px"
       >
-        <iframe
-          src="/resume/nicholas-kasten-resume.pdf"
-          class="w-full h-[80vh]"
-          title="Resume preview"></iframe>
+        {pageImages.map((src, i) => (
+          <img
+            src={src}
+            alt={`Resume page ${i + 1}`}
+            class="w-full block"
+            loading={i === 0 ? "eager" : "lazy"}
+          />
+        ))}
       </div>
     ) : (
       <div

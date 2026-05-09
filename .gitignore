@@ -21,3 +21,6 @@ Thumbs.db
 # editor
 *.swp
 *.swo
+
+# build-time PDF rasterization output
+public/resume/_generated/

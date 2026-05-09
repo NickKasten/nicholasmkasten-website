@@ -1,0 +1,127 @@
+---
+import EqAccent from "./EqAccent.astro";
+
+interface Props {
+  username: string;
+  limit?: number;
+}
+
+interface FeedItem {
+  type: "PushEvent" | "PullRequestEvent";
+  repo: string;
+  repoUrl: string;
+  url: string;
+  title: string;
+  createdAt: Date;
+}
+
+const { username, limit = 4 } = Astro.props;
+
+async function fetchEvents(): Promise<FeedItem[]> {
+  try {
+    const res = await fetch(
+      `https://api.github.com/users/${username}/events/public`,
+      { headers: { "User-Agent": "nicholasmkasten-website" } },
+    );
+    if (!res.ok) return [];
+    const events = (await res.json()) as Array<{
+      type: string;
+      repo: { name: string };
+      payload: {
+        commits?: Array<{ message: string }>;
+        pull_request?: { html_url: string; title: string; number: number };
+        action?: string;
+      };
+      created_at: string;
+    }>;
+
+    const items: FeedItem[] = [];
+    const seenRepos = new Set<string>();
+
+    for (const e of events) {
+      if (e.type !== "PushEvent" && e.type !== "PullRequestEvent") continue;
+      if (seenRepos.has(e.repo.name)) continue;
+      seenRepos.add(e.repo.name);
+
+      if (e.type === "PushEvent") {
+        const message = e.payload.commits?.[0]?.message ?? "Pushed commits";
+        items.push({
+          type: "PushEvent",
+          repo: e.repo.name,
+          repoUrl: `https://github.com/${e.repo.name}`,
+          url: `https://github.com/${e.repo.name}`,
+          title: message.split("\n")[0],
+          createdAt: new Date(e.created_at),
+        });
+      } else if (e.payload.pull_request) {
+        items.push({
+          type: "PullRequestEvent",
+          repo: e.repo.name,
+          repoUrl: `https://github.com/${e.repo.name}`,
+          url: e.payload.pull_request.html_url,
+          title: `${e.payload.action ?? "updated"} PR: ${e.payload.pull_request.title}`,
+          createdAt: new Date(e.created_at),
+        });
+      }
+    }
+
+    return items.slice(0, limit);
+  } catch {
+    return [];
+  }
+}
+
+const items = await fetchEvents();
+const relativeTime = (d: Date) => {
+  const diffMs = Date.now() - d.valueOf();
+  const days = Math.floor(diffMs / 86400000);
+  if (days < 1) return "today";
+  if (days === 1) return "yesterday";
+  if (days < 30) return `${days}d ago`;
+  if (days < 365) return `${Math.floor(days / 30)}mo ago`;
+  return `${Math.floor(days / 365)}y ago`;
+};
+---
+
+{
+  items.length > 0 && (
+    <section
+      class="rounded-2xl border border-sand-200 dark:border-stone-700 bg-white/60 dark:bg-stone-900/40 p-6"
+      aria-labelledby="github-feed-heading"
+    >
+      <header class="flex items-center gap-2 mb-4">
+        <EqAccent size="sm" class="text-sage-600 dark:text-sage-400" label="Live" />
+        <h2
+          id="github-feed-heading"
+          class="text-xs uppercase tracking-wider text-stone-500 dark:text-stone-400"
+        >
+          Recent on GitHub
+        </h2>
+      </header>
+      <ul class="space-y-3">
+        {items.map((item) => (
+          <li>
+            <a
+              href={item.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="group flex items-start justify-between gap-4 hover:text-sage-600 dark:hover:text-sage-400 transition-colors"
+            >
+              <div class="min-w-0">
+                <div class="text-xs text-stone-500 dark:text-stone-400 truncate">
+                  {item.repo}
+                </div>
+                <div class="text-sm text-stone-800 dark:text-sand-200 group-hover:text-sage-600 dark:group-hover:text-sage-400 truncate">
+                  {item.title}
+                </div>
+              </div>
+              <span class="text-xs text-stone-400 dark:text-stone-500 shrink-0 mt-0.5">
+                {relativeTime(item.createdAt)}
+              </span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )
+}

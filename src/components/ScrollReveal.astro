@@ -1,8 +1,19 @@
 ---
+interface Props {
+  delay?: number;
+  stagger?: "16th" | "8th" | "quarter";
+  class?: string;
+}
 
+const { delay, stagger, class: className } = Astro.props;
+const style = delay ? `--reveal-delay:${delay}ms` : undefined;
 ---
 
-<div class="scroll-reveal">
+<div
+  class:list={["scroll-reveal", className]}
+  data-stagger={stagger}
+  style={style}
+>
   <slot />
 </div>
 
@@ -13,15 +24,61 @@
     transition:
       opacity 0.6s ease-out,
       transform 0.6s ease-out;
+    transition-delay: var(--reveal-delay, 0ms);
   }
   .scroll-reveal.visible {
     opacity: 1;
     transform: translateY(0);
   }
+
+  /* Stagger mode: the wrapper itself is just a shell; each direct child
+     fades in with an incremental delay set inline by the script below. */
+  .scroll-reveal[data-stagger] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .scroll-reveal[data-stagger] > * {
+    opacity: 0;
+    transform: translateY(20px);
+    transition:
+      opacity 0.6s ease-out,
+      transform 0.6s ease-out;
+  }
+  .scroll-reveal[data-stagger].visible > * {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .scroll-reveal,
+    .scroll-reveal[data-stagger] > * {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+  }
 </style>
 
 <script>
   document.addEventListener("astro:page-load", () => {
+    const stepFor: Record<string, string> = {
+      "16th": "var(--reveal-16th)",
+      "8th": "var(--reveal-8th)",
+      quarter: "var(--reveal-quarter)",
+    };
+
+    document
+      .querySelectorAll<HTMLElement>(".scroll-reveal[data-stagger]")
+      .forEach((parent) => {
+        const key = parent.dataset.stagger;
+        const step = key && stepFor[key];
+        if (!step) return;
+        Array.from(parent.children).forEach((child, i) => {
+          (child as HTMLElement).style.transitionDelay = `calc(${step} * ${i})`;
+        });
+      });
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {

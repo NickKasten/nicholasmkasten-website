@@ -2,6 +2,7 @@
 import BaseHead from "../components/BaseHead.astro";
 import Navbar from "../components/Navbar.astro";
 import Footer from "../components/Footer.astro";
+import WaveformBackdrop from "../components/WaveformBackdrop.astro";
 import { ViewTransitions } from "astro:transitions";
 import "../styles/global.css";
 
@@ -39,6 +40,7 @@ const { title, description, image } = Astro.props;
   <body
     class="min-h-screen flex flex-col bg-sand-50 dark:bg-stone-950 text-stone-900 dark:text-sand-100 font-sans antialiased"
   >
+    <WaveformBackdrop />
     <Navbar />
     <main class="flex-1">
       <slot />

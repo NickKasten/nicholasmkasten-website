@@ -1,13 +1,17 @@
 ---
 import ThemeToggle from "./ThemeToggle.astro";
+import EqAccent from "./EqAccent.astro";
 
 const navLinks = [
   { href: "/", label: "Projects" },
   { href: "/blog", label: "Blog" },
+  { href: "/now", label: "Now" },
   { href: "/about", label: "About" },
 ];
 
 const currentPath = Astro.url.pathname;
+const isActive = (href: string) =>
+  href === "/" ? currentPath === "/" : currentPath.startsWith(href);
 ---
 
 <nav
@@ -23,19 +27,24 @@ const currentPath = Astro.url.pathname;
 
     <div class="flex items-center gap-6">
       {
-        navLinks.map((link) => (
-          <a
-            href={link.href}
-            class:list={[
-              "text-sm font-medium transition-colors",
-              currentPath === link.href
-                ? "text-sage-600 dark:text-sage-400"
-                : "text-stone-600 dark:text-sand-300 hover:text-sage-600 dark:hover:text-sage-400",
-            ]}
-          >
-            {link.label}
-          </a>
-        ))
+        navLinks.map((link) => {
+          const active = isActive(link.href);
+          return (
+            <a
+              href={link.href}
+              class:list={[
+                "inline-flex items-center gap-2 text-sm font-medium transition-colors",
+                active
+                  ? "text-sage-600 dark:text-sage-400"
+                  : "text-stone-600 dark:text-sand-300 hover:text-sage-600 dark:hover:text-sage-400",
+              ]}
+              aria-current={active ? "page" : undefined}
+            >
+              {link.label}
+              {active && <EqAccent size="sm" label={`Active: ${link.label}`} />}
+            </a>
+          );
+        })
       }
       <ThemeToggle />
     </div>

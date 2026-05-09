@@ -2,7 +2,29 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import ProjectCard from "../components/ProjectCard.astro";
 import ScrollReveal from "../components/ScrollReveal.astro";
-import { projects } from "../data/projects";
+import LatestPostCard from "../components/LatestPostCard.astro";
+import GithubFeed from "../components/GithubFeed.astro";
+import WaveDivider from "../components/WaveDivider.astro";
+import { getCollection } from "astro:content";
+
+const projects = (
+  await getCollection("projects", ({ data }) => {
+    return import.meta.env.PROD ? data.draft !== true : true;
+  })
+).sort((a, b) => {
+  if (a.data.featured !== b.data.featured) return a.data.featured ? -1 : 1;
+  const aDate = a.data.startDate?.valueOf() ?? 0;
+  const bDate = b.data.startDate?.valueOf() ?? 0;
+  return bDate - aDate;
+});
+
+const posts = (
+  await getCollection("blog", ({ data }) => {
+    return import.meta.env.PROD ? data.draft !== true : true;
+  })
+).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+const latestPost = posts[0];
 ---
 
 <BaseLayout
@@ -10,7 +32,7 @@ import { projects } from "../data/projects";
   description="Software engineer, builder, thinker. Check out my projects and writing."
 >
   <!-- Hero Section -->
-  <section class="max-w-5xl mx-auto px-6 pt-20 pb-16">
+  <section class="max-w-5xl mx-auto px-6 pt-20 pb-12">
     <h1
       class="text-4xl sm:text-5xl font-bold tracking-tight text-stone-900 dark:text-sand-100 mb-4"
     >
@@ -23,18 +45,39 @@ import { projects } from "../data/projects";
       <br />
       Here is what I've been working on:
     </p>
+    <span
+      class="hero-baseline mt-6 block h-px max-w-xs bg-sage-400/70 dark:bg-sage-500/70 origin-left"
+      aria-hidden="true"
+    ></span>
+  </section>
+
+  <!-- Living content: latest post + GitHub feed -->
+  <section class="max-w-5xl mx-auto px-6 pb-12">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {latestPost && <LatestPostCard post={latestPost} />}
+      <GithubFeed username="NickKasten" limit={4} />
+    </div>
+  </section>
+
+  <section class="max-w-5xl mx-auto px-6 pb-12" aria-hidden="true">
+    <WaveDivider class="text-sand-300 dark:text-stone-700" cycles={8} />
   </section>
 
   <!-- Projects Grid -->
   <section class="max-w-5xl mx-auto px-6 pb-20">
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-      {
-        projects.map((project) => (
-          <ScrollReveal>
-            <ProjectCard project={project} />
-          </ScrollReveal>
-        ))
-      }
-    </div>
+    <ScrollReveal
+      stagger="16th"
+      class="grid grid-cols-1 md:grid-cols-2 gap-6"
+    >
+      {projects.map((project) => <ProjectCard project={project} />)}
+    </ScrollReveal>
   </section>
 </BaseLayout>
+
+<style>
+  @media (prefers-reduced-motion: no-preference) {
+    .hero-baseline {
+      animation: breathe 5s ease-in-out infinite;
+    }
+  }
+</style>

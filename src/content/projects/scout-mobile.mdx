@@ -1,0 +1,28 @@
+---
+title: "Scout"
+tagline: "iOS Simulator iteration loop for Claude Code — for React Native and beyond."
+summary: "Scout is a Model Context Protocol server that gives Claude Code eyes and hands inside the iOS Simulator, closing the mobile iteration loop the same way Claude Code already closes the web loop. It can boot simulators, install and launch apps, capture screenshots, drive the UI, stream logs, and inspect the accessibility tree — so Claude can build, run, observe, and debug a React Native app end-to-end without a human in the middle."
+role: "Solo build"
+startDate: 2026-04-01
+tech: ["TypeScript", "Node 22", "Model Context Protocol", "iOS Simulator", "React Native", "idb"]
+repoUrl: "https://github.com/NickKasten/scout-mobile"
+featured: true
+outcomes:
+  - "14 MCP tools spanning boot, install, launch, screenshot, tap, swipe, type, key press, log streaming, accessibility-tree fetch, tap-by-element, and a YAML-driven flow runner."
+  - "iOS Simulator and React Native are both first-class adapters; Claude can build and install an RN app automatically when `SCOUT_BUNDLE_ID` is set."
+  - "202 unit tests passing through Phase 2 — device awareness, accessibility tree, UDID targeting, jank detection, integration scaffold."
+---
+
+## Why
+
+Claude Code already closes the loop on the web: drive a page, read the DOM, watch the console, fix the bug, repeat. On mobile that loop has been broken — the model writes code, then waits for a human to launch the simulator and report what happened. Scout removes the human from that step.
+
+## What it does
+
+Scout is an MCP server. Claude Code connects to it the same way it connects to any other tool surface, but instead of files or shells it gets a focused vocabulary for driving an iOS Simulator: boot a device, install a `.app`, launch by bundle id, capture screenshots, tap, swipe, type, stream logs, and walk the accessibility tree. There's also a flow runner that takes a YAML file of steps and assertions, so common journeys can be scripted and re-checked instead of demonstrated by hand each time.
+
+The React Native adapter wraps the iOS adapter so Claude can build, install, and inspect an RN app end-to-end. Drop a `SCOUT_BUNDLE_ID` into `.mcp.json` and Claude takes it from there.
+
+## Where it's headed
+
+Phase 2 is shipped — device awareness, accessibility-tree introspection, the flow runner, jank detection, and 202 unit tests. The roadmap (`docs/SPEC.md` in the repo) lays out where the project goes next: deeper RN ergonomics, more assertion primitives, and eventually a path off iOS-only.

@@ -4,9 +4,12 @@
   "description": "Personal website for portfolio display and blogging",
   "type": "module",
   "scripts": {
+    "predev": "node scripts/render-resume.mjs",
     "dev": "astro dev",
+    "prebuild": "node scripts/render-resume.mjs",
     "build": "astro build",
-    "preview": "astro preview"
+    "preview": "astro preview",
+    "render-resume": "node scripts/render-resume.mjs"
   },
   "repository": {
     "type": "git",
@@ -22,9 +25,11 @@
   "dependencies": {
     "@astrojs/mdx": "^4.3.13",
     "@astrojs/vercel": "^9.0.4",
+    "@napi-rs/canvas": "^1.0.0",
     "@tailwindcss/typography": "^0.5.19",
     "@tailwindcss/vite": "^4.2.1",
     "astro": "^5.18.0",
+    "pdfjs-dist": "^3.11.174",
     "tailwindcss": "^4.2.1"
   },
   "devDependencies": {

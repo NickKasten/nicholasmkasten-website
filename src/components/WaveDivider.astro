@@ -1,0 +1,52 @@
+---
+interface Props {
+  color?: string;
+  amplitude?: number;
+  cycles?: number;
+  strokeWidth?: number;
+  class?: string;
+}
+
+const {
+  color = "currentColor",
+  amplitude = 4,
+  cycles = 6,
+  strokeWidth = 1.5,
+  class: className = "",
+} = Astro.props;
+
+const cycleWidth = 100;
+const totalWidth = cycles * cycleWidth;
+const padding = amplitude + strokeWidth;
+const height = padding * 2;
+
+let d = `M 0 ${padding}`;
+for (let i = 0; i < cycles; i++) {
+  const x0 = i * cycleWidth;
+  const xMid = x0 + cycleWidth / 2;
+  const xEnd = x0 + cycleWidth;
+  const c1a = x0 + cycleWidth / 6;
+  const c2a = x0 + cycleWidth / 3;
+  const c1b = xMid + cycleWidth / 6;
+  const c2b = xMid + cycleWidth / 3;
+  d += ` C ${c1a} ${padding - amplitude}, ${c2a} ${padding - amplitude}, ${xMid} ${padding}`;
+  d += ` C ${c1b} ${padding + amplitude}, ${c2b} ${padding + amplitude}, ${xEnd} ${padding}`;
+}
+---
+
+<svg
+  class:list={["block w-full", className]}
+  viewBox={`0 0 ${totalWidth} ${height}`}
+  preserveAspectRatio="none"
+  aria-hidden="true"
+  focusable="false"
+>
+  <path
+    d={d}
+    fill="none"
+    stroke={color}
+    stroke-width={strokeWidth}
+    stroke-linecap="round"
+    vector-effect="non-scaling-stroke"
+  />
+</svg>
